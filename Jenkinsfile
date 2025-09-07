@@ -18,7 +18,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${REGISTRY}:${IMAGE_TAG}")
+                    sh "docker build -t ${REGISTRY}:${IMAGE_TAG} ."
                 }
             }
         }
@@ -26,17 +26,17 @@ pipeline {
         stage('Run & Test Container') {
             steps {
                 script {
-                    // Run the container in detached mode
-                    def container = dockerImage.run("-d -p ${HOST_PORT}:${CONTAINER_PORT}")
+                    def containerId = sh(
+                        script: "docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} ${REGISTRY}:${IMAGE_TAG}",
+                        returnStdout: true
+                    ).trim()
+
                     try {
-                        // Wait for the container to start
                         sh "sleep 5"
-                        // Test the application
-                        sh "curl -f http://localhost:${HOST_PORT} || (docker logs ${container.id} && exit 1)"
+                        sh "curl -f http://localhost:${HOST_PORT} || (docker logs ${containerId} && exit 1)"
                     } finally {
-                        // Stop and remove the container
-                        container.stop()
-                        container.remove()
+                        sh "docker stop ${containerId} || true"
+                        sh "docker rm -f ${containerId} || true"
                     }
                 }
             }
@@ -46,8 +46,9 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', 'dockerhub-credentials-id') {
-                        dockerImage.push(IMAGE_TAG)
-                        dockerImage.push('latest')
+                        sh "docker push ${REGISTRY}:${IMAGE_TAG}"
+                        sh "docker tag ${REGISTRY}:${IMAGE_TAG} ${REGISTRY}:latest"
+                        sh "docker push ${REGISTRY}:latest"
                     }
                 }
             }

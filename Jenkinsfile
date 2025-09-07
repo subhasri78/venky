@@ -2,20 +2,20 @@ pipeline {
   agent any
 
   environment {
-    REGISTRY = "your-dockerhub-username/venky"
+    REGISTRY       = "your-dockerhub-username/venky"
     CREDENTIALS_ID = "dockerhub-credentials-id"
-    IMAGE_TAG = "${env.BUILD_NUMBER}"
+    IMAGE_TAG      = "${env.BUILD_NUMBER}"
+    HOST_PORT      = 8080          // add these if using test stage
+    CONTAINER_PORT = 80
   }
-}
 
   stages {
     stage('Checkout') {
       steps {
         git branch: 'main', url: 'https://github.com/subhasri78/venky.git'
-// Build, test, push stages go here
-  }
-}
-  }
+      }
+    }
+
     stage('Build Docker Image') {
       steps {
         script {
@@ -28,14 +28,13 @@ pipeline {
       steps {
         script {
           docker.withRun("-p ${HOST_PORT}:${CONTAINER_PORT}") { container ->
-            // Give the container time to start
             sh "sleep 5"
-            // Simple health check
             sh "curl -f http://localhost:${HOST_PORT} || (docker logs ${container.id} && exit 1)"
           }
         }
       }
-    
+    }
+
     stage('Push to Docker Hub') {
       steps {
         script {
@@ -46,13 +45,12 @@ pipeline {
         }
       }
     }
-  
+  }
 
   post {
     always {
-      echo "Build #${env.BUILD_NUMBER} complete — image pushed and tested on port ${HOST_PORT}."
+      echo "Build #${env.BUILD_NUMBER} completed — tested on port ${HOST_PORT} and pushed to Docker Hub."
     }
   }
-}
 }
 

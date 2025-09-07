@@ -5,7 +5,7 @@ pipeline {
     REGISTRY        = "your-dockerhub-username/theaterbookings"
     CREDENTIALS_ID  = "dockerhub-credentials-id"
     IMAGE_TAG       = "${env.BUILD_NUMBER}"
-    HOST_PORT       = 8080
+    HOST_PORT       = 8088
     CONTAINER_PORT  = 80
   }
 

@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    REGISTRY        = "your-dockerhub-username/theaterbookings"
+    REGISTRY        = "your-dockerhub-username/venky"
     CREDENTIALS_ID  = "dockerhub-credentials-id"
     IMAGE_TAG       = "${env.BUILD_NUMBER}"
     HOST_PORT       = 8088

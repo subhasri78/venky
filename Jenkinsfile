@@ -5,7 +5,7 @@ pipeline {
     REGISTRY       = "your-dockerhub-username/venky"
     CREDENTIALS_ID = "dockerhub-credentials-id"
     IMAGE_TAG      = "${env.BUILD_NUMBER}"
-    HOST_PORT      = 8080          // add these if using test stage
+    HOST_PORT      = 8088          // add these if using test stage
     CONTAINER_PORT = 80
   }
 

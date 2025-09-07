@@ -6,19 +6,16 @@ pipeline {
     CREDENTIALS_ID = "dockerhub-credentials-id"
     IMAGE_TAG = "${env.BUILD_NUMBER}"
   }
+}
 
   stages {
     stage('Checkout') {
       steps {
         git branch: 'main', url: 'https://github.com/subhasri78/venky.git'
-      }
-    }
-
-    // Build, test, push stages go here
+// Build, test, push stages go here
   }
 }
-
-
+  }
     stage('Build Docker Image') {
       steps {
         script {
@@ -38,8 +35,7 @@ pipeline {
           }
         }
       }
-    }
-
+    
     stage('Push to Docker Hub') {
       steps {
         script {
@@ -50,12 +46,13 @@ pipeline {
         }
       }
     }
-  }
+  
 
   post {
     always {
       echo "Build #${env.BUILD_NUMBER} complete — image pushed and tested on port ${HOST_PORT}."
     }
   }
+}
 }
 

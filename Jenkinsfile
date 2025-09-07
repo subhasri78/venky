@@ -2,19 +2,22 @@ pipeline {
   agent any
 
   environment {
-    REGISTRY        = "your-dockerhub-username/venky"
-    CREDENTIALS_ID  = "dockerhub-credentials-id"
-    IMAGE_TAG       = "${env.BUILD_NUMBER}"
-    HOST_PORT       = 8088
-    CONTAINER_PORT  = 80
+    REGISTRY = "your-dockerhub-username/venky"
+    CREDENTIALS_ID = "dockerhub-credentials-id"
+    IMAGE_TAG = "${env.BUILD_NUMBER}"
   }
 
   stages {
     stage('Checkout') {
       steps {
-        git branch: 'main', url: 'https://your.git.repo/theaterbookings.git'
+        git branch: 'main', url: 'https://github.com/subhasri78/venky.git'
       }
     }
+
+    // Build, test, push stages go here
+  }
+}
+
 
     stage('Build Docker Image') {
       steps {
